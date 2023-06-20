@@ -123,6 +123,16 @@ spec:
             repository: https://argoproj.github.io/argo-helm
             version: 5.21.0
           namespace: argocd
+          values:
+            configs:
+              cm:
+                application.resourceTrackingMethod: annotation
+            server:
+              service:
+                type: LoadBalancer
+              extraArgs:
+                - --insecure
+                - --disable-auth
     patches:
     - type: FromCompositeFieldPath
       fromFieldPath: metadata.name
