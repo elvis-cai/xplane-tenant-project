@@ -1,9 +1,0 @@
-apiVersion: demo.codefresh.io/v1alpha1
-kind: VirtualArgoCD
-metadata:
-  name: river1
-  labels:
-    tenant: river1
-spec:
-  argocd:
-    values: {}
