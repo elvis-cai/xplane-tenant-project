@@ -32,7 +32,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier:  "ArgoCD-Server-" + "vcluster"
+                - identifier: .metadata.name + "-Service-" + .metadata.namespace + "-" + "vcluster"
                   blueprint: '"argocd"'
                   title: .metadata.name
                   properties:
@@ -67,7 +67,6 @@ port-k8s-exporter:
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
                     Namespace: .metadata.namespace + "-" + "vcluster"
-                    ArgoCD: "ArgoCD-Server-" + "vcluster"
       
         - kind: apps/v1/daemonsets 
           selector:
@@ -93,7 +92,6 @@ port-k8s-exporter:
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
                     Namespace: .metadata.namespace + "-" + "vcluster"
-                    ArgoCD: "ArgoCD-Server-" + "vcluster"
       
         - kind: apps/v1/statefulsets
           selector:
@@ -119,7 +117,6 @@ port-k8s-exporter:
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
                     Namespace: .metadata.namespace + "-" + "vcluster"
-                    ArgoCD: "ArgoCD-Server-" + "vcluster"
       
         - kind: apps/v1/replicasets
           selector:
@@ -144,7 +141,6 @@ port-k8s-exporter:
                     containers: (.spec.template.spec.containers | map({name, image, resources}))
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
-                    ArgoCD: "ArgoCD-Server-" + "vcluster"
                     replicaSetManager: .metadata.ownerReferences[0].name + "-" + .metadata.ownerReferences[0].kind + "-" + .metadata.namespace + "-" + "vcluster" // []
       
         # Pods who are owned by replica-sets are connected directly to their deployment
