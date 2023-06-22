@@ -1,0 +1,25 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: port-k8s-exporter
+  namespace: argocd
+spec:
+  destination:
+    namespace: port
+    server: https://kubernetes.default.svc
+  project: default
+  source:
+    chart: port-k8s-exporter
+    helm:
+      releaseName: port-k8s-exporter
+      valueFiles: 
+        - config.yaml
+      version: v3
+    repoURL: https://github.com/elvis-cai/xplane-tenant-project.git
+    path: cluster-addons/port-k8s-exporter
+  syncPolicy:
+    automated:
+      selfHeal: true
+      prune: true
+    syncOptions:
+      - CreateNamespace=true

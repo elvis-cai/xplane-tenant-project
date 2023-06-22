@@ -1,0 +1,8 @@
+apiVersion: v2
+name: port-k8s-exporter
+dependencies:
+- name: port-k8s-exporter
+  version: 0.1.17
+  repository: https://port-labs.github.io/helm-charts
+type: application
+version: 0.1.17
