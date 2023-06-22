@@ -26,6 +26,21 @@ port-k8s-exporter:
                 - identifier: '"vcluster"'
                   title: '"vcluster"'
                   blueprint: '"cluster"'
+        - kind: v1/services
+          selector:
+            query: (.metadata.labels["app.kubernetes.io/name"] == "argocd-server") and (.metadata.namespace | startswith("kube") | not )
+          port:
+            entity:
+              mappings:
+                - identifier: .metadata.name + "-Service-" + .metadata.namespace + "-" + "{CLUSTER_NAME}"
+                  blueprint: '"Service"'
+                  title: .metadata.name
+                  properties:
+                    type: .spec.type
+                    clusterIP: .spec.clusterIP
+                    externalIP: .status.loadBalancer.ingress[0].ip
+                  relations:
+                    Cluster: '"vcluster"'
       
         - kind: apps/v1/deployments
           selector:
