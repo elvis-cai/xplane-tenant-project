@@ -37,7 +37,7 @@ port-k8s-exporter:
                   title: .metadata.name
                   properties:
                     type: .spec.type
-                    serverURL: .status.loadBalancer.ingress[0].ip
+                    serverURL: '.status.loadBalancer.ingress[0].ip |= "http://" + .'
                   relations:
                     Cluster: '"tiger"'
       
