@@ -1,22 +1,22 @@
 apiVersion: argoproj.io/v1alpha1
 kind: Application
 metadata:
-  name: nginx
+  name: port-k8s-exporter
   namespace: argocd
 spec:
   destination:
-    namespace: default
+    namespace: port
     server: https://kubernetes.default.svc
   project: default
   source:
-    chart: nginx
+    targetRevision: HEAD
     helm:
-      releaseName: nginx
-      parameters:
-        - name: service.type
-          value: ClusterIP
-    repoURL: 'https://charts.bitnami.com/bitnami'
-    targetRevision: 15.0.2
+      releaseName: port-k8s-exporter
+      valueFiles: 
+        - team1.yaml
+      version: v3
+    repoURL: https://github.com/elvis-cai/xplane-tenant-project.git
+    path: cluster-addons/port-k8s-exporter
   syncPolicy:
     automated:
       selfHeal: true
