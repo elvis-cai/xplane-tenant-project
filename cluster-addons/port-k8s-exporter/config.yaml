@@ -32,7 +32,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-Service-" + .metadata.namespace + "-" + "{CLUSTER_NAME}"
+                - identifier: .metadata.name + "-Service-" + .metadata.namespace + "-" + "vcluster"
                   blueprint: '"Service"'
                   title: .metadata.name
                   properties:
