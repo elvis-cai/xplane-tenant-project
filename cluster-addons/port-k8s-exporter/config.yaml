@@ -8,14 +8,14 @@ port-k8s-exporter:
           port:
             entity:
               mappings: # Mappings between one K8s object to one or many Port Entities. Each value is a JQ query.
-                - identifier: .metadata.name + "-" + "team1"
+                - identifier: .metadata.name + "-" + "vcluster"
                   title: .metadata.name
                   blueprint: '"namespace"'
                   properties:
                     creationTimestamp: .metadata.creationTimestamp
                     labels: .metadata.labels
                   relations:
-                    Cluster: '"team1"'
+                    Cluster: '"vcluster"'
       
         - kind: v1/namespaces
           selector:
@@ -23,8 +23,8 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: '"team1"'
-                  title: '"team1"'
+                - identifier: '"vcluster"'
+                  title: '"vcluster"'
                   blueprint: '"cluster"'
       
         - kind: apps/v1/deployments
@@ -33,7 +33,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-Deployment-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-Deployment-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   icon: '"Deployment"'
                   blueprint: '"workload"'
@@ -52,7 +52,7 @@ port-k8s-exporter:
                     containers: (.spec.template.spec.containers | map({name, image, resources}))
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
-                    Namespace: .metadata.namespace + "-" + "team1"
+                    Namespace: .metadata.namespace + "-" + "vcluster"
       
         - kind: apps/v1/daemonsets 
           selector:
@@ -60,7 +60,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-DaemonSet-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-DaemonSet-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   blueprint: '"workload"'
                   properties:
@@ -77,7 +77,7 @@ port-k8s-exporter:
                     containers: (.spec.template.spec.containers | map({name, image, resources}))
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
-                    Namespace: .metadata.namespace + "-" + "team1"
+                    Namespace: .metadata.namespace + "-" + "vcluster"
       
         - kind: apps/v1/statefulsets
           selector:
@@ -85,7 +85,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings: 
-                - identifier: .metadata.name + "-StatefulSet-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-StatefulSet-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   blueprint: '"workload"'
                   properties:
@@ -102,7 +102,7 @@ port-k8s-exporter:
                     containers: (.spec.template.spec.containers | map({name, image, resources}))
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
-                    Namespace: .metadata.namespace + "-" + "team1"
+                    Namespace: .metadata.namespace + "-" + "vcluster"
       
         - kind: apps/v1/replicasets
           selector:
@@ -110,7 +110,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-ReplicaSet-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-ReplicaSet-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   icon: '"Deployment"'
                   blueprint: '"replicaSet"'
@@ -127,7 +127,7 @@ port-k8s-exporter:
                     containers: (.spec.template.spec.containers | map({name, image, resources}))
                     isHealthy: if .spec.replicas == .status.availableReplicas then "Healthy" else "Unhealthy" end
                   relations:
-                    replicaSetManager: .metadata.ownerReferences[0].name + "-" + .metadata.ownerReferences[0].kind + "-" + .metadata.namespace + "-" + "team1" // []
+                    replicaSetManager: .metadata.ownerReferences[0].name + "-" + .metadata.ownerReferences[0].kind + "-" + .metadata.namespace + "-" + "vcluster" // []
       
         # Pods who are owned by replica-sets are connected directly to their deployment
         - kind: v1/pods
@@ -136,7 +136,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   icon: '"Microservices"'
                   blueprint: '"pod"'
@@ -147,8 +147,8 @@ port-k8s-exporter:
                     containers: (.spec.containers | map({image, resources})) + .status.containerStatuses | group_by(.image) | map(add)
                     conditions: .status.conditions
                   relations:
-                    replicaSet: .metadata.ownerReferences[0].name + "-" + "ReplicaSet" + "-" + .metadata.namespace + "-" + "team1"
-                    Node: (.spec.nodeName) | (split(".")|join("_")) + "-" + "team1" // ""
+                    replicaSet: .metadata.ownerReferences[0].name + "-" + "ReplicaSet" + "-" + .metadata.namespace + "-" + "vcluster"
+                    Node: (.spec.nodeName) | (split(".")|join("_")) + "-" + "vcluster" // ""
         
         
         # Pods that are not managed by replicasets->deployments (daemonsets, statefulsets etc)
@@ -158,7 +158,7 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   icon: '"Microservices"'
                   blueprint: '"pod"'
@@ -169,15 +169,15 @@ port-k8s-exporter:
                     containers: (.spec.containers | map({image, resources})) + .status.containerStatuses | group_by(.image) | map(add)
                     conditions: .status.conditions
                   relations:
-                    workload: .metadata.ownerReferences[0].name + "-" + .metadata.ownerReferences[0].kind + "-" + .metadata.namespace + "-" + "team1"
-                    Node: (.spec.nodeName) | (split(".")|join("_")) + "-" + "team1"
+                    workload: .metadata.ownerReferences[0].name + "-" + .metadata.ownerReferences[0].kind + "-" + .metadata.namespace + "-" + "vcluster"
+                    Node: (.spec.nodeName) | (split(".")|join("_")) + "-" + "vcluster"
                     
         - kind: v1/nodes
           port:
             entity:
               mappings:
-                - identifier: (.metadata.name) | (split(".")|join("_")) + "-" + "team1"
-                  title: .metadata.name + "-" + "team1"
+                - identifier: (.metadata.name) | (split(".")|join("_")) + "-" + "vcluster"
+                  title: .metadata.name + "-" + "vcluster"
                   icon: '"Node"'
                   blueprint: '"node"'
                   properties:
@@ -188,14 +188,14 @@ port-k8s-exporter:
                     kubeletVersion: .status.nodeInfo.kubeletVersion | split("-") | .[0]
                     ready: .status.conditions[] | select(.type == "Ready") | .status
                   relations:
-                    Cluster: '"team1"'
+                    Cluster: '"vcluster"'
       
         # ArgoCD configuration
         - kind: argoproj.io/v1alpha1/applications
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "vcluster"
                   blueprint: '"argocdApp"'
                   title: .metadata.name
                   properties:
@@ -206,20 +206,20 @@ port-k8s-exporter:
                     gitPath: .spec.source.path // null
                     gitRev: .status.sync.revision // null
                   relations:
-                    workload: '(.spec.destination.namespace as $namespace | .status.resources | map(select(.kind == "Deployment" or .kind == "StatefuleSet" or .kind == "DaemonSet" or .kind == "Rollout" )) | .[] | .name + "-" + .kind + "-" + $namespace + "-team1") // []'
-                    argocdProject: .spec.project + "-" + .metadata.namespace + "-" + "team1"
-                    destinationNamespace: .spec.destination.namespace + "-" + "team1"
+                    workload: '(.spec.destination.namespace as $namespace | .status.resources | map(select(.kind == "Deployment" or .kind == "StatefuleSet" or .kind == "DaemonSet" or .kind == "Rollout" )) | .[] | .name + "-" + .kind + "-" + $namespace + "-vcluster") // []'
+                    argocdProject: .spec.project + "-" + .metadata.namespace + "-" + "vcluster"
+                    destinationNamespace: .spec.destination.namespace + "-" + "vcluster"
       
         - kind: argoproj.io/v1alpha1/appproject
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   blueprint: '"argocdProject"'
                   properties:
                   relations:
-                    Namespace: .metadata.namespace + "-" + "team1"
+                    Namespace: .metadata.namespace + "-" + "vcluster"
       
         - kind: v1/secrets
           selector:
@@ -227,11 +227,11 @@ port-k8s-exporter:
           port:
             entity:
               mappings:
-                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "team1"
+                - identifier: .metadata.name + "-" + .metadata.namespace + "-" + "vcluster"
                   title: .metadata.name
                   blueprint: '"argocdRepo"'
                   properties:
                     repoUrl: .data.url | @base64d
                     repoType: .data.type | @base64d
                   relations:
-                    Namespace: .metadata.namespace + "-" + "team1"
+                    Namespace: .metadata.namespace + "-" + "vcluster"
