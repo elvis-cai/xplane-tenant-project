@@ -33,12 +33,11 @@ port-k8s-exporter:
             entity:
               mappings:
                 - identifier: .metadata.name + "-Service-" + .metadata.namespace + "-" + "vcluster"
-                  blueprint: '"service"'
+                  blueprint: '"argocd"'
                   title: .metadata.name
                   properties:
                     type: .spec.type
-                    clusterIP: .spec.clusterIP
-                    externalIP: .status.loadBalancer.ingress[0].ip
+                    serverURL: .status.loadBalancer.ingress[0].ip
                   relations:
                     Cluster: '"vcluster"'
       
