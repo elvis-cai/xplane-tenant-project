@@ -1,5 +1,0 @@
-port-k8s-exporter:
-  secret:
-    secrets:
-      portClientId: CEQdC5yl3OQOFsPQFvSW1owDNXn045kD
-      portClientSecret: TwMsprNa3F2tneIaHlCuFesv4KNGwzBvsGZ4vNVGBKqQa5iyNFxYT5xLMu6fJYCF
